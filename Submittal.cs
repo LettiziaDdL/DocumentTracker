@@ -1,7 +1,7 @@
 /*******************************************************************
  * Name: Lettizia Diaz de Leon
- * Date: 11/11/2026
- * Assignment: SDC320 Course Project - Week 1 (Phase 1)
+ * Date: 11/16/2026
+ * Assignment: SDC320 Course Project - Week 2 (Phase 2)
  *
  * Purpose: Submittal represents a contractor submittal, such as product
  * data or shop drawings, sent in for review. It adds the contractor
@@ -9,7 +9,7 @@
 */
 
 //INHERITANCE: Submittal is derived from the Document base class
-public class Submittal : Document
+public class Submittal : Document, IReviewable
 {
     public string Contractor { get; set; }
     public DateTime ResponseDue { get; set; }
@@ -30,4 +30,12 @@ public class Submittal : Document
         return string.Format("{0}\nContractor: {1}\nResponse Due: {2:MM/dd/yyyy}",
             base.GetDetails(), Contractor, ResponseDue);
     }
+
+    // INTERFACE IMPLEMENTATION: submittal review summaries include contractor and response due date.
+    public string GetReviewSummary()
+    {
+        return string.Format("{0} | {1} | Contractor: {2} | Response Due: {3:MM/dd/yyyy} | Status: {4}",
+            DocNumber, Title, Contractor, ResponseDue, Status);
+    }
+
 }

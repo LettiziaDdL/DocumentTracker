@@ -1,7 +1,7 @@
 /*******************************************************************
  * Name: Lettizia Diaz de Leon
- * Date: 11/11/2026
- * Assignment: SDC320 Course Project - Week 1 (Phase 1)
+ * Date: 11/16/2026
+ * Assignment: SDC320 Course Project - Week 2 (Phase 2)
  *
  * Purpose: Document is the BASE CLASS for every controlled project
  * document in the Project Document Tracker. It holds the information

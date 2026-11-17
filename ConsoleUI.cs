@@ -1,7 +1,7 @@
 /*******************************************************************
  * Name: Lettizia Diaz de Leon
- * Date: 11/11/2026
- * Assignment: SDC320 Course Project - Week 1 (Phase 1)
+ * Date: 11/16/2026
+ * Assignment: SDC320 Course Project - Week 2 (Phase 2)
  *
  * Purpose: ConsoleUI handles all of the console input and output
  * for the application: the header, welcome message, menu, formatted
@@ -16,7 +16,7 @@ public static class ConsoleUI
     public static void DisplayHeader()
     {
         Console.WriteLine(Line);
-        Console.WriteLine("  SDC320 Course Project - Week 1");
+        Console.WriteLine("  SDC320 Course Project - Week 2");
         Console.WriteLine("  Project Document Tracker");
         Console.WriteLine("  Lettizia Diaz de Leon");
         Console.WriteLine(Line);
@@ -42,6 +42,7 @@ public static class ConsoleUI
         Console.WriteLine("  4. Update a document's revision or status");
         Console.WriteLine("  5. Delete a document");
         Console.WriteLine("  6. View distribution list");
+        Console.WriteLine("  7. View document review summaries");
         Console.WriteLine("  Q. Quit");
         return GetString("Enter your choice: ").ToUpper();
     }
@@ -63,6 +64,17 @@ public static class ConsoleUI
                 d.DocNumber, d.DocType, Shorten(d.Title, 32), d.Revision, d.Status);
         }
         Console.WriteLine("\n{0} document(s) listed.", docs.Count);
+    }
+
+    // Displays summaries through the shared IReviewable interface.
+    // Each document type supplies its own review-summary implementation.
+    public static void DisplayReviewSummaries(IEnumerable<IReviewable> items)
+    {
+        Console.WriteLine("\n---------------- DOCUMENT REVIEW SUMMARIES ----------------");
+        foreach (IReviewable item in items)
+        {
+            Console.WriteLine("- " + item.GetReviewSummary());
+        }
     }
 
     public static void DisplayContactTable(List<Contact> contacts)

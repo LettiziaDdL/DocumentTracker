@@ -1,7 +1,7 @@
 /*******************************************************************
  * Name: Lettizia Diaz de Leon
- * Date: 11/11/2026
- * Assignment: SDC320 Course Project - Week 1 (Phase 1)
+ * Date: 11/16/2026
+ * Assignment: SDC320 Course Project - Week 2 (Phase 2)
  *
  * Purpose: Main application class for the Project Document Tracker.
  * It creates a sample project with realistic documents and contacts,
@@ -44,11 +44,15 @@ public class DocumentTrackerApp
                 case "6":
                     ConsoleUI.DisplayContactTable(project.DistributionList);
                     break;
+                case "7":
+                    // POLYMORPHISM: each object is accessed through IReviewable.
+                    ConsoleUI.DisplayReviewSummaries(project.Documents.OfType<IReviewable>());
+                    break;
                 case "Q":
                     running = false;
                     break;
                 default:
-                    ConsoleUI.DisplayMessage("That isn't a menu option. Please enter 1-6 or Q.");
+                    ConsoleUI.DisplayMessage("That isn't a menu option. Please enter 1-7 or Q.");
                     break;
             }
         }

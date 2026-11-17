@@ -1,7 +1,7 @@
 /*******************************************************************
  * Name: Lettizia Diaz de Leon
- * Date: 11/11/2026
- * Assignment: SDC320 Course Project - Week 1 (Phase 1)
+ * Date: 11/16/2026
+ * Assignment: SDC320 Course Project - Week 2 (Phase 2)
  *
  * Purpose: Drawing represents a project drawing, such as a site plan
  * or a single-line diagram. It adds the engineering discipline and
@@ -9,7 +9,7 @@
 */
 
 //INHERITANCE: Drawing is derived from the Document base class
-public class Drawing : Document
+public class Drawing : Document, IReviewable
 {
     public string Discipline { get; set; }
     public string SheetNumber { get; set; }
@@ -30,4 +30,12 @@ public class Drawing : Document
         return string.Format("{0}\nDiscipline: {1}\nSheet Number: {2}",
             base.GetDetails(), Discipline, SheetNumber);
     }
+
+    // INTERFACE IMPLEMENTATION: drawing review summaries include discipline and sheet.
+    public string GetReviewSummary()
+    {
+        return string.Format("{0} | {1} | Discipline: {2} | Sheet: {3} | Status: {4}",
+            DocNumber, Title, Discipline, SheetNumber, Status);
+    }
+
 }
