@@ -1,23 +1,26 @@
 /*******************************************************************
  * Name: Lettizia Diaz de Leon
- * Date: 11/16/2026
- * Assignment: SDC320 Course Project - Week 2 (Phase 2)
+ * Date: 11/24/2026
+ * Assignment: SDC320 Course Project - Week 3 (Phase 3)
  *
- * Purpose: ConsoleUI handles all of the console input and output
- * for the application: the header, welcome message, menu, formatted
- * tables, messages, and getting validated values from the user.
- * Keeping this in its own class makes it reusable for the rest of
- * the course project.
+ * Purpose: ConsoleUI handles all of the console input and output for
+ * the application: the header, welcome message, menu, formatted tables,
+ * messages, and getting validated values from the user.
 */
+
+//ACCESS SPECIFIERS: the class is static because it holds no data of its
+//own. Methods the rest of the program uses are public; the divider line
+//and the Shorten helper are private because only this class needs them.
 public static class ConsoleUI
 {
-    private const string Line = "==========================================================================";
+    private const string Line =
+        "==============================================================================";
 
     public static void DisplayHeader()
     {
         Console.WriteLine(Line);
-        Console.WriteLine("  SDC320 Course Project - Week 2");
-        Console.WriteLine("  Project Document Tracker");
+        Console.WriteLine("  SDC320 Course Project - Week 3");
+        Console.WriteLine("  Project Document Tracker: Abstraction, Constructors & Access Specifiers");
         Console.WriteLine("  Lettizia Diaz de Leon");
         Console.WriteLine(Line);
     }
@@ -25,25 +28,29 @@ public static class ConsoleUI
     public static void DisplayWelcome(Project project)
     {
         Console.WriteLine("\nWelcome to the Project Document Tracker!");
-        Console.WriteLine("Keep track of drawings, specifications, and submittals, their");
-        Console.WriteLine("current revision and review status, and who should receive them.");
+        Console.WriteLine("Track drawings, specifications, and submittals, their revision and");
+        Console.WriteLine("review status, when each review is due, and who should receive them.");
         Console.WriteLine("\nCurrent project: {0} - {1} ({2})",
             project.ProjectNumber, project.Name, project.Location);
-        Console.WriteLine("\nTo use the tracker, type the number of a menu option and press");
-        Console.WriteLine("Enter. Type Q at the main menu to quit.");
+        Console.WriteLine("\nType the number of a menu option and press Enter.");
+        Console.WriteLine("Type Q at the main menu to quit.");
     }
 
     public static string DisplayMenu()
     {
-        Console.WriteLine("\n------------------- MAIN MENU -------------------");
-        Console.WriteLine("  1. View all documents");
-        Console.WriteLine("  2. View document details");
-        Console.WriteLine("  3. Add a document");
-        Console.WriteLine("  4. Update a document's revision or status");
-        Console.WriteLine("  5. Delete a document");
-        Console.WriteLine("  6. View distribution list");
-        Console.WriteLine("  7. View document review summaries");
-        Console.WriteLine("  Q. Quit");
+        Console.WriteLine("\n--------------------- MAIN MENU ---------------------");
+        Console.WriteLine("    1. View all documents");
+        Console.WriteLine("    2. View document details");
+        Console.WriteLine("    3. Add a document");
+        Console.WriteLine("    4. Submit a new revision");
+        Console.WriteLine("    5. Delete a document");
+        Console.WriteLine("    6. View distribution list");
+        Console.WriteLine("    7. View document review summaries");
+        Console.WriteLine("    8. Review a document (approve, revise, reject)");
+        Console.WriteLine("    9. View overdue documents");
+        Console.WriteLine("   10. Add a contact");
+        Console.WriteLine("   11. Delete a contact");
+        Console.WriteLine("    Q. Quit");
         return GetString("Enter your choice: ").ToUpper();
     }
 
@@ -55,19 +62,20 @@ public static class ConsoleUI
             return;
         }
         Console.WriteLine();
-        Console.WriteLine("{0,-12} {1,-14} {2,-32} {3,-4} {4,-12}",
-            "Doc #", "Type", "Title", "Rev", "Status");
-        Console.WriteLine(new string('-', 78));
+        Console.WriteLine("{0,-12} {1,-14} {2,-32} {3,-4} {4,-10} {5,-10}",
+            "Doc #", "Type", "Title", "Rev", "Status", "Due");
+        Console.WriteLine(new string('-', 87));
         foreach (Document d in docs)
         {
-            Console.WriteLine("{0,-12} {1,-14} {2,-32} {3,-4} {4,-12}",
-                d.DocNumber, d.DocType, Shorten(d.Title, 32), d.Revision, d.Status);
+            Console.WriteLine("{0,-12} {1,-14} {2,-32} {3,-4} {4,-10} {5:MM/dd/yyyy}{6}",
+                d.DocNumber, d.DocType, Shorten(d.Title, 32), d.Revision, d.Status,
+                d.GetReviewDueDate(), d.IsOverdue() ? " *" : "");
         }
-        Console.WriteLine("\n{0} document(s) listed.", docs.Count);
+        Console.WriteLine("\n{0} document(s) listed. * = overdue", docs.Count);
     }
 
-    // Displays summaries through the shared IReviewable interface.
-    // Each document type supplies its own review-summary implementation.
+    //Displays summaries through the shared IReviewable interface (Week 2).
+    //Each document type supplies its own review-summary implementation.
     public static void DisplayReviewSummaries(IEnumerable<IReviewable> items)
     {
         Console.WriteLine("\n---------------- DOCUMENT REVIEW SUMMARIES ----------------");
@@ -85,13 +93,13 @@ public static class ConsoleUI
             return;
         }
         Console.WriteLine();
-        Console.WriteLine("{0,-16} {1,-22} {2,-20} {3}",
-            "Name", "Company", "Role", "Receives");
-        Console.WriteLine(new string('-', 92));
+        Console.WriteLine("{0,-4} {1,-16} {2,-22} {3,-20} {4}",
+            "ID", "Name", "Company", "Role", "Receives");
+        Console.WriteLine(new string('-', 96));
         foreach (Contact c in contacts)
         {
-            Console.WriteLine("{0,-16} {1,-22} {2,-20} {3}",
-                c.Name, c.Company, c.Role, c.ReceivesTypes);
+            Console.WriteLine("{0,-4} {1,-16} {2,-22} {3,-20} {4}",
+                c.ContactId, c.Name, c.Company, c.Role, c.ReceivesTypes);
         }
     }
 
@@ -121,17 +129,29 @@ public static class ConsoleUI
         return input;
     }
 
+    //Keeps asking until the user types a whole number
+    public static int GetInt(string prompt)
+    {
+        while (true)
+        {
+            if (int.TryParse(GetString(prompt), out int result))
+            {
+                return result;
+            }
+            Console.WriteLine("   Please enter a whole number.");
+        }
+    }
+
     //Keeps asking until the user types a valid date
     public static DateTime GetDate(string prompt)
     {
         while (true)
         {
-            string input = GetString(prompt);
-            if (DateTime.TryParse(input, out DateTime result))
+            if (DateTime.TryParse(GetString(prompt), out DateTime result))
             {
                 return result;
             }
-            Console.WriteLine("   Please enter a date like 11/15/2026.");
+            Console.WriteLine("   Please enter a date like 11/23/2026.");
         }
     }
 

@@ -1,67 +1,88 @@
 /*******************************************************************
  * Name: Lettizia Diaz de Leon
- * Date: 11/16/2026
- * Assignment: SDC320 Course Project - Week 2 (Phase 2)
+ * Date: 11/24/2026
+ * Assignment: SDC320 Course Project - Week 3 (Phase 3)
  *
  * Purpose: Project represents a single construction or energy project.
  * It holds the project number, name, and location, along with the
- * project's documents and its distribution list. Methods are provided
- * to add, find, and remove documents and to look up which contacts
- * should receive a given document.
+ * project's documents and its distribution list, and provides methods
+ * to add, find, and remove them.
 */
 
 //COMPOSITION: a Project "has a" list of Document objects and "has a"
-//list of Contact objects. The project can't do its job without them.
+//list of Contact objects.
 public class Project
 {
-    public string ProjectNumber { get; set; }
+    //ACCESS SPECIFIERS: the lists are private fields. Outside code can
+    //read them through the get-only properties, but must use the Add and
+    //Remove methods below to change them.
+    private readonly List<Document> m_documents;
+    private readonly List<Contact> m_contacts;
+
+    public string ProjectNumber { get; private set; }
     public string Name { get; set; }
     public string Location { get; set; }
-    public List<Document> Documents { get; }
-    public List<Contact> DistributionList { get; }
+    public List<Document> Documents { get { return m_documents; } }
+    public List<Contact> DistributionList { get { return m_contacts; } }
 
     public Project(string projectNumber, string name, string location)
     {
         ProjectNumber = projectNumber;
         Name = name;
         Location = location;
-        Documents = new List<Document>();
-        DistributionList = new List<Contact>();
+        m_documents = new List<Document>();
+        m_contacts = new List<Contact>();
     }
 
     public void AddDocument(Document doc)
     {
-        Documents.Add(doc);
+        m_documents.Add(doc);
+    }
+
+    //Find a document by number (not case sensitive); null if not found
+    public Document? FindDocument(string docNumber)
+    {
+        return m_documents.Find(d => SameNumber(d.DocNumber, docNumber));
+    }
+
+    public bool RemoveDocument(string docNumber)
+    {
+        Document? doc = FindDocument(docNumber);
+        return doc != null && m_documents.Remove(doc);
     }
 
     public void AddContact(Contact contact)
     {
-        DistributionList.Add(contact);
+        m_contacts.Add(contact);
     }
 
-    //Find a document by its number (not case sensitive). Returns null
-    //if no document matches.
-    public Document? FindDocument(string docNumber)
+    public Contact? FindContact(int contactId)
     {
-        return Documents.Find(d =>
-            d.DocNumber.Equals(docNumber, StringComparison.OrdinalIgnoreCase));
+        return m_contacts.Find(c => c.ContactId == contactId);
     }
 
-    //Remove a document by number. Returns true if one was removed.
-    public bool RemoveDocument(string docNumber)
+    public bool RemoveContact(int contactId)
     {
-        Document? doc = FindDocument(docNumber);
-        if (doc == null)
-        {
-            return false;
-        }
-        Documents.Remove(doc);
-        return true;
+        Contact? contact = FindContact(contactId);
+        return contact != null && m_contacts.Remove(contact);
     }
 
     //Everyone on the distribution list who receives this document's type
     public List<Contact> GetRecipients(Document doc)
     {
-        return DistributionList.FindAll(c => c.Receives(doc.DocType));
+        return m_contacts.FindAll(c => c.Receives(doc.DocType));
+    }
+
+    //POLYMORPHISM: IsOverdue calls GetReviewDueDate, which runs the right
+    //version for each document type
+    public List<Document> GetOverdueDocuments()
+    {
+        return m_documents.FindAll(d => d.IsOverdue());
+    }
+
+    //ACCESS SPECIFIERS: private helper, only used inside this class
+    private static bool SameNumber(string a, string b)
+    {
+        return a.Equals(b, StringComparison.OrdinalIgnoreCase);
     }
 }
